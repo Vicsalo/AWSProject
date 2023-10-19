@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Address Verification</title>
+</head>
+<body>
+    <h1>Address Verification</h1>
+    <form id="addressForm">
+        <label for="AddressLine1">Address Line 1:</label>
+        <input type="text" id="AddressLine1" required><br>
+
+        <label for="city">City:</label>
+        <input type="text" id="City" required><br>
+
+        <label for="state">State:</label>
+        <input type="text" id="State" required><br>
+
+        <label for="zip">ZIP Code:</label>
+        <input type="text" id="Zipcode" required><br>
+
+        <button type="submit">Verify Address</button>
+    </form>
+    <div id="result"></div>
+    <script src="database.js"></script>
+    
+    <!-- Add Address Button -->
+    <button id="addAddressButton">Add Address</button>
+    
+    <!-- Update Address Button -->
+    <button id="updateAddressButton">Update Address</button>
+    
+    <!-- Delete Address Button -->
+    <button id="deleteAddressButton">Delete Address</button>
+
+    <script>
+        const addressForm = document.getElementById("addressForm");
+        const resultDiv = document.getElementById("result");
+
+        addressForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Get user input
+            const AddressLine1 = document.getElementById("AddressLine1").value;
+            const city = document.getElementById("City").value;
+            const state = document.getElementById("State").value;
+            const zip = document.getElementById("Zipcode").value;
+
+            // Construct the API request URL with user input
+            const apiUrl = `http://localhost:5500/AVSform.html{encodeURIComponent(AddressLine1)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
+
+            // Make the API request
+            fetch(apiUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Handle the API response data here
+                    if (data.isValid) {
+                        resultDiv.innerHTML = "Address is valid!";
+                    } else {
+                        resultDiv.innerHTML = "Address is not valid. Suggestions: " + data.suggestions.join(", ");
+                    }
+                })
+                .catch((error) => {
+                    // Handle errors, e.g., network issues or invalid responses
+                    console.error("Error:", error);
+                    resultDiv.innerHTML = "An error occurred while verifying the address.";
+                });
+        });
+        
+        // Add event listeners for the buttons
+        const addAddressButton = document.getElementById("addAddressButton");
+        const updateAddressButton = document.getElementById("updateAddressButton");
+        const deleteAddressButton = document.getElementById("deleteAddressButton");
+        
+        addAddressButton.addEventListener("click", function() {
+            // Add Address button logic here
+            // You can implement the logic for adding an address here.
+        });
+        
+        updateAddressButton.addEventListener("click", function() {
+            // Update Address button logic here
+            // You can implement the logic for updating an address here.
+        });
+        
+        deleteAddressButton.addEventListener("click", function() {
+            // Delete Address button logic here
+            // You can implement the logic for deleting an address here.
+        });
+    </script>
+</body>
+</html>
